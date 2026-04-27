@@ -1,10 +1,13 @@
+VENV = .venv
+PYTHON = $(VENV)/bin/python
+PIP = $(VENV)/bin/pip
+
 gpt-2: ./build/bin/gpt-2-backend ./models/gpt-2-117M/ggml-model.bin
 	./build/bin/gpt-2-backend -m models/gpt-2-117M/ggml-model.bin -p "This is an example"
 
 ./build/bin/gpt-2-backend:
 	python3 -m venv .venv
-	source .venv/bin/activate
-	pip install -r requirements.txt
+	$(PIP) install -r requirements.txt
 	mkdir -p build 
 	cd build && cmake .. \
 		-DCMAKE_BUILD_TYPE=Release \
