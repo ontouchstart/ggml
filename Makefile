@@ -2,10 +2,27 @@ VENV = .venv
 PYTHON = $(VENV)/bin/python
 PIP = $(VENV)/bin/pip
 
-gpt-2: ./build/bin/gpt-2-backend ./models/gpt-2-117M/ggml-model.bin
-	./build/bin/gpt-2-backend -m models/gpt-2-117M/ggml-model.bin -p "This is an example"
+all: ./build/bin ./models/gpt-2-117M/ggml-model.bin
+	./build/bin/gpt-2-alloc
+	./build/bin/gpt-2-batched
+	./build/bin/gpt-2-backend
+	./build/bin/gpt-2-ctx
+	./build/bin/gpt-2-sched
+	mkdir -p quant
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q2_k.bin q2_k
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q3_k.bin q3_k
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q4_0.bin q4_0
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q4_1.bin q4_1
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q4_k.bin q4_k
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q5_0.bin q5_0
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q5_1.bin q5_1
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q5_k.bin q5_k
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q6_k.bin q6_k
+	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q8_0.bin q8_0
+	du -h quant/*
+	du -h models/gpt-2-117M/ggml-model.bin
 
-./build/bin/gpt-2-backend:
+./build/bin:
 	python3 -m venv .venv
 	$(PIP) install -r requirements.txt
 	mkdir -p build 
