@@ -1,7 +1,3 @@
-VENV = .venv
-PYTHON = $(VENV)/bin/python
-PIP = $(VENV)/bin/pip
-
 all: ./build/bin ./models/gpt-2-117M/ggml-model.bin
 	./build/bin/gpt-2-alloc
 	./build/bin/gpt-2-batched
@@ -23,8 +19,6 @@ all: ./build/bin ./models/gpt-2-117M/ggml-model.bin
 	du -h models/gpt-2-117M/ggml-model.bin
 
 ./build/bin:
-	python3 -m venv .venv
-	$(PIP) install -r requirements.txt
 	mkdir -p build 
 	cd build && cmake .. \
 		-DCMAKE_BUILD_TYPE=Release \
