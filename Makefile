@@ -1,4 +1,19 @@
-all: ./build/bin ./models/gpt-2-117M/ggml-model.bin
+./build/bin:
+	mkdir -p build
+	cd build && cmake .. \
+		-DCMAKE_BUILD_TYPE=Release \
+		-D GGML_NATIVE=OFF \
+		-D GGML_CPU_ARM_ARCH=armv8-a \
+		-D GGML_CPU=ON \
+		-D BUILD_TESTS=OFF
+	cd build && cmake --build .
+	cd build && ctest --output-on-failure
+
+./models/gpt-2-117M/ggml-model.bin:
+	./examples/gpt-2/download-ggml-model.sh 117M
+
+
+test: ./build/bin ./models/gpt-2-117M/ggml-model.bin
 	./build/bin/gpt-2-alloc
 	./build/bin/gpt-2-batched
 	./build/bin/gpt-2-backend
@@ -17,18 +32,3 @@ all: ./build/bin ./models/gpt-2-117M/ggml-model.bin
 	./build/bin/gpt-2-quantize models/gpt-2-117M/ggml-model.bin quant/ggml-model-q8_0.bin q8_0
 	du -h quant/*
 	du -h models/gpt-2-117M/ggml-model.bin
-
-./build/bin:
-	mkdir -p build 
-	cd build && cmake .. \
-		-DCMAKE_BUILD_TYPE=Release \
-		-D GGML_NATIVE=OFF \
-		-D GGML_CPU_ARM_ARCH=armv8-a \
-		-D GGML_CPU=ON \
-		-D BUILD_TESTS=OFF
-	cd build && cmake --build . 
-	cd build && ctest --output-on-failure 
-
-./models/gpt-2-117M/ggml-model.bin:
-	./examples/gpt-2/download-ggml-model.sh 117M   
-
